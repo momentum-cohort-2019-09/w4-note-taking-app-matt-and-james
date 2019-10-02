@@ -5,5 +5,8 @@
   },
   "scripts": {
     "start": "parcel serve index.html"
+  },
+  "dependencies": {
+    "tachyons": "^4.11.1"
   }
 }
