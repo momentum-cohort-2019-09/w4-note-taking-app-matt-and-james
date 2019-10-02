@@ -9,17 +9,34 @@ class User(){
 
     function createServer(){
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
-        fetch('https://notes-api.glitch.me/api/users'), {
+        fetch('https://notes-api.glitch.me/api/users', {
             method = 'POST',
             headers = new Headers({
                 'username': this.username,
                 'password': this.password
             })
-        }
+        })
     }
-}
 
-class Note(){
+    function getAllNotes(){
+
+    }
+
+    function getNotesByTag(){
+
+    }
+
+    function createNewNote(){
+
+    }
+
+    function updateNote(){
+
+    }
+
+    function deleteNote(){
+
+    }
 
 }
 
