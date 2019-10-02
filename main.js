@@ -1,133 +1,140 @@
 class User {
-    constructor(username, password){
+    constructor(username, password) {
         this.username = username;
         this.password = password;
         this.auth = 'Basic ' + btoa(username + ':' + password);
     }
 
-    createUser(){
+    createUser() {
+
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         fetch(creationEndpoint, {
-            method: 'POST',
-            body: JSON.stringify({ 'username': this.username, 'password': this.password}),
-            headers: {
-                'Content-Type': 'application/json'
-              }
+                method: 'POST',
+                body: JSON.stringify({ 'username': this.username, 'password': this.password }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
             })
-            .then(function (response){
-                if (response.status == 422){
+            .then(function(response) {
+                if (response.status == 422) {
                     return 'Welcome Back!'
-                } else if (response.status == 201){
+                } else if (response.status == 201) {
                     return 'New user successfully created!'
                 }
-        })
+            })
     }
 
-    getAllNotes(){
+
+
+
+    getAllNotes() {
+
         const allNotesEndpoint = "https://notes-api.glitch.me/api/notes"
         fetch(allNotesEndpoint, {
-            method: 'GET',
-            headers:  {
-                'Authorization': this.auth
-            }
-         })
-         .then(function (response){
-            return response.json();
-        })
+                method: 'GET',
+                headers: {
+                    'Authorization': this.auth
+                }
+            })
+            .then(function(response) {
+                return response.json();
+            })
     }
 
-    getNotesByTag(tag){
+    getNotesByTag(tag) {
         let notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/" + tag;
         fetch(notesByTagEndpoint, {
-            method: 'GET',
-            headers: {
-                'Authorization': this.auth
-             }
-        })
-        .then(function (response){
-            console.log(response.status);
-        })
+                method: 'GET',
+                headers: {
+                    'Authorization': this.auth
+                }
+            })
+            .then(function(response) {
+                console.log(response.status);
+            })
     }
 
-    createNewNote(text, title, tags){
+    createNewNote(text, title, tags) {
         const newNoteEndpoint = "https://notes-api.glitch.me/api/notes"
         fetch(newNoteEndpoint, {
-            method: 'POST',
-            body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags}),
-            headers: {
-                'Authorization': this.auth,
-                'Content-Type': 'application/json'
-            }
-         })
-        .then(function (response){
-            console.log(response.status);
-        })
+                method: 'POST',
+                body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags }),
+                headers: {
+                    'Authorization': this.auth,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                console.log(response.status);
+            })
     }
 
-    updateNote(text, title, tags, noteId){
+    updateNote(text, title, tags, noteId) {
         let updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + noteId;
         fetch(updateNoteEndpoint, {
-            method: 'PUT',
-            body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags}),
-            headers: {
-                'Authorization': this.auth,
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(function (response){
-            console.log(response.status);
-        })
+                method: 'PUT',
+                body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags }),
+                headers: {
+                    'Authorization': this.auth,
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(function(response) {
+                console.log(response.status);
+            })
     }
 
-    deleteNote(noteId){
+    deleteNote(noteId) {
         let deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + noteId;
         fetch(deleteNoteEndpoint, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': this.auth
-            }
-        })
-        .then(function (response){
-            console.log(response.status);
-        })
+                method: 'DELETE',
+                headers: {
+                    'Authorization': this.auth
+                }
+            })
+            .then(function(response) {
+                console.log(response.status);
+            })
     }
 }
 
 class app {
-    constructor(user){
+    constructor(user) {
         this.user = user;
         this.loggedIn = false;
     }
 
-    renderPage(){
-        if (this.loggedIn == false){
+    renderPage() {
+        if (this.loggedIn == false) {
             //show loggin page
         } else {
             //show users main page
         }
     }
 
-    loginOrCreateUser(){
+    loginOrCreateUser() {
         //login or create user
     }
 
-    populateNotes(){
+
+
+    populateNotes() {
         // get all notes and render on page
     }
 
-    populateNotesByTag(){
+    populateNotesByTag() {
         // get all notes with a certain tag and populate them
     }
 
-    getCreateNewNoteData(){
+    getCreateNewNoteData() {
         // get create new note data from form
     }
 
-    getDeleteNoteData(){
+    getDeleteNoteData() {
         // get delete note data from form
     }
 
-    getUpdateNoteData(){
+    getUpdateNoteData() {
         // get update note data from form
     }
 }
