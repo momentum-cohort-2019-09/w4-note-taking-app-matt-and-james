@@ -1,13 +1,10 @@
-import { createSecureServer } from "http2";
-import { createServer } from "https";
-
-class User(){
-    constructor(username, password){
-        this.username = username;
-        this.password = password;
+class User {
+    constructor(username, password) {
+        this.username = username,
+            this.password = password
     }
 
-    function createServer(){
+    function createUser() {
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         fetch('https://notes-api.glitch.me/api/users', {
             method = 'POST',
@@ -18,25 +15,24 @@ class User(){
         })
     }
 
-    function getAllNotes(){
+    function getAllNotes() {
 
     }
 
-    function getNotesByTag(){
+    function getNotesByTag() {
 
     }
 
-    function createNewNote(){
+    function createNewNote() {
 
     }
 
-    function updateNote(){
+    function updateNote() {
 
     }
 
-    function deleteNote(){
+    function deleteNote() {
 
     }
 
 }
-
