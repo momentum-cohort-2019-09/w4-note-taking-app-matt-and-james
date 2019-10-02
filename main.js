@@ -2,90 +2,93 @@ class User {
     constructor(username, password){
         this.username = username;
         this.password = password;
+        this.auth = 'Basic ' + btoa(username + ':' + password);
     }
 
     createUser(){
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         fetch(creationEndpoint, {
-            method = 'POST',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
+            method: 'POST',
+            body: JSON.stringify({ 'username': this.username, 'password': this.password}),
+            headers: {
+                'Content-Type': 'application/json'
+              }
             })
             .then(function (response){
                 console.log(response.status);
-            })
         })
     }
 
     getAllNotes(){
         const allNotesEndpoint = "https://notes-api.glitch.me/api/notes"
-        fetch(creationEndpoint, {
-            method = 'GET',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
-            })
-            .then(function (response){
-                console.log(response.status);
-            })
+        fetch(allNotesEndpoint, {
+            method: 'GET',
+            headers:  {
+                'Authorization': this.auth
+            }
+         })
+         .then(function (response){
+            console.log(response.status);
         })
     }
 
     getNotesByTag(){
         const notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/:tag"
         fetch(notesByTagEndpoint, {
-            method = 'GET',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
-            })
-            .then(function (response){
-                console.log(response.status);
-            })
+            method: 'GET',
+            headers: {
+                'Authorization': this.auth
+             }
+        })
+        .then(function (response){
+            console.log(response.status);
         })
     }
 
-    createNewNote(){
+    createNewNote(text, title, tags){
         const newNoteEndpoint = "https://notes-api.glitch.me/api/notes"
         fetch(newNoteEndpoint, {
-            method = 'POST',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
-            })
-            .then(function (response){
-                console.log(response.status);
-            })
+            method: 'POST',
+            body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags}),
+            headers: {
+                'Authorization': this.auth,
+                'Content-Type': 'application/json'
+            }
+         })
+        .then(function (response){
+            console.log(response.status);
         })
     }
 
     updateNote(text, title, tags){
         const updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
         fetch(updateNoteEndpoint, {
-            method = 'PUT',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
-            })
-            .then(function (response){
-                console.log(response.status);
-            })
+            method: 'PUT',
+            body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags}),
+            headers: {
+                'Authorization': this.auth,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function (response){
+            console.log(response.status);
         })
     }
 
-    deleteNote(text, title, tags){
+    deleteNote(noteId){
         const deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
         fetch(deleteNoteEndpoint, {
-            method = 'DELETE',
-            headers = new Headers({
-                'username': this.username,
-                'password': this.password
-            })
-            .then(function (response){
-                console.log(response.status);
-            })
+            method: 'DELETE',
+            headers: {
+                'Authorization': this.auth
+            }
+        })
+        .then(function (response){
+            console.log(response.status);
         })
     }
 }
+
+user = new User('james', 'matt');
+user.createUser();
 
