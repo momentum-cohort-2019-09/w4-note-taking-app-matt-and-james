@@ -4,7 +4,7 @@ class User {
         this.password = password;
     }
 
-    function createUser(){
+    createUser(){
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         fetch(creationEndpoint, {
             method = 'POST',
@@ -18,7 +18,7 @@ class User {
         })
     }
 
-    function getAllNotes(){
+    getAllNotes(){
         const allNotesEndpoint = "https://notes-api.glitch.me/api/notes"
         fetch(creationEndpoint, {
             method = 'GET',
@@ -32,7 +32,7 @@ class User {
         })
     }
 
-    function getNotesByTag(){
+    getNotesByTag(){
         const notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/:tag"
         fetch(notesByTagEndpoint, {
             method = 'GET',
@@ -46,7 +46,7 @@ class User {
         })
     }
 
-    function createNewNote(){
+    createNewNote(){
         const newNoteEndpoint = "https://notes-api.glitch.me/api/notes"
         fetch(newNoteEndpoint, {
             method = 'POST',
@@ -60,7 +60,7 @@ class User {
         })
     }
 
-    function updateNote(text, title, tags){
+    updateNote(text, title, tags){
         const updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
         fetch(updateNoteEndpoint, {
             method = 'PUT',
@@ -74,7 +74,7 @@ class User {
         })
     }
 
-    function deleteNote(text, title, tags){
+    deleteNote(text, title, tags){
         const deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
         fetch(deleteNoteEndpoint, {
             method = 'DELETE',
@@ -87,6 +87,5 @@ class User {
             })
         })
     }
-
 }
 
