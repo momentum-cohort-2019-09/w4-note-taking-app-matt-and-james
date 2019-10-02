@@ -15,7 +15,11 @@ class User {
               }
             })
             .then(function (response){
-                console.log(response.status);
+                if (response.status == 422){
+                    return 'Welcome Back!'
+                } else if (response.status == 201){
+                    return 'New user successfully created!'
+                }
         })
     }
 
@@ -28,7 +32,7 @@ class User {
             }
          })
          .then(function (response){
-            console.log(response.status);
+            return response.json();
         })
     }
 
@@ -89,6 +93,44 @@ class User {
     }
 }
 
+class app {
+    constructor(user){
+        this.user = user;
+        this.loggedIn = false;
+    }
+
+    renderPage(){
+        if (this.loggedIn == false){
+            //show loggin page
+        } else {
+            //show users main page
+        }
+    }
+
+    loginOrCreateUser(){
+        //login or create user
+    }
+
+    populateNotes(){
+        // get all notes and render on page
+    }
+
+    populateNotesByTag(){
+        // get all notes with a certain tag and populate them
+    }
+
+    getCreateNewNoteData(){
+        // get create new note data from form
+    }
+
+    getDeleteNoteData(){
+        // get delete note data from form
+    }
+
+    getUpdateNoteData(){
+        // get update note data from form
+    }
+}
+
 user = new User('james', 'matt');
 user.getAllNotes();
-
