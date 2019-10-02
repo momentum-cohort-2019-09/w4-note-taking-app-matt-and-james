@@ -32,8 +32,8 @@ class User {
         })
     }
 
-    getNotesByTag(){
-        const notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/:tag"
+    getNotesByTag(tag){
+        let notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/" + tag;
         fetch(notesByTagEndpoint, {
             method: 'GET',
             headers: {
@@ -60,8 +60,8 @@ class User {
         })
     }
 
-    updateNote(text, title, tags){
-        const updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
+    updateNote(text, title, tags, noteId){
+        let updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + noteId;
         fetch(updateNoteEndpoint, {
             method: 'PUT',
             body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags}),
@@ -76,7 +76,7 @@ class User {
     }
 
     deleteNote(noteId){
-        const deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/:id"
+        let deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + noteId;
         fetch(deleteNoteEndpoint, {
             method: 'DELETE',
             headers: {
@@ -90,5 +90,5 @@ class User {
 }
 
 user = new User('james', 'matt');
-user.createUser();
+user.getAllNotes();
 
