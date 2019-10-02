@@ -1,0 +1,27 @@
+#head {
+    display: block;
+    text-align: center;
+    margin-block-start: .67em;
+    margin-block-end: .3em;
+}
+
+h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+#body {
+    display: block;
+    margin: 0px;
+}
+
+#login-form {
+    display: block;
+    text-align: center;
+    margin-top: 0em;
+}
