@@ -20,33 +20,11 @@ class User {
 
 class App {
     constructor() {
-        this.user = "";
+        this.user = '';
         this.data = {};
         this.selectedNote = '';
         this.newUser = false;
         this.loggedIn = false;
-    }
-
-    renderInitLogin() {
-        let self = this
-        if (this.loggedIn == false) {
-            this.revealLoginForm();
-
-            let login = document.getElementById('subButt')
-            login.addEventListener('click', function() {
-                let username = document.getElementById('username')
-                let password = document.getElementById('password')
-                this.user = new User(username.value, password.value)
-                self.loginOrCreateUser()
-            })
-
-        } else if (this.loggedIn == true && this.newUser == false) {
-            this.hideLoginForm();
-            this.createAndAppendWelcomeChild('Welcome Back!');
-        } else if (this.loggedIn == true && this.newUser == true) {
-            this.hideLoginForm();
-            this.createAndAppendWelcomeChild('New user created!')
-        }
     }
 
     renderPage(notes) {
@@ -70,20 +48,42 @@ class App {
                 self.selectedNote = notes.notes[i]._id
                 event.preventDefault();
             })
-            child.innerHTML = '<span> ' + notes.notes[i].text + ' <span>';
+            if (notes.notes[i].title == '' || notes.notes[i].title == null){
+                if (notes.notes[i].updated == '' || notes.notes[i].updated == null){
+                    child.innerHTML = '<span> ' + notes.notes[i].text + ' <span>';
+                } else {
+                    let lastUpdated = notes.notes[i].updated.split('T');
+                    let yearMonthDay = lastUpdated[0].split('-');
+                    let hourMinSec = lastUpdated[1].split(':');
+                    let formatedUpdated = yearMonthDay[1] + '/' + yearMonthDay[2] + '/' + yearMonthDay[0] + ' ' + hourMinSec[0] + ':' + hourMinSec[1] + ':' + hourMinSec[2].split('.')[0];
+                    let date = new Date(formatedUpdated + ' UTC');
+                    child.innerHTML = '<span> ' + notes.notes[i].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                }
+            } else {
+                if (notes.notes[i].updated == '' || notes.notes[i].updated == null) {
+                    child.innerHTML = '<span> ' + '<strong>' + notes.notes[i].title + ': ' + '</strong>' + notes.notes[i].text + ' <span>';
+                } else {
+                    let lastUpdated = notes.notes[i].updated.split('T');
+                    let yearMonthDay = lastUpdated[0].split('-');
+                    let hourMinSec = lastUpdated[1].split(':');
+                    let formatedUpdated = yearMonthDay[1] + '/' + yearMonthDay[2] + '/' + yearMonthDay[0] + ' ' + hourMinSec[0] + ':' + hourMinSec[1] + ':' + hourMinSec[2].split('.')[0];
+                    let date = new Date(formatedUpdated + ' UTC');
+                    child.innerHTML = '<span> ' + '<strong>' + notes.notes[i].title + ': ' + '</strong>' + notes.notes[i].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                }
+            }
             ulChild.appendChild(child);
         }
         parent.appendChild(ulChild);
     }
 
     // works
-    loginOrCreateUser() {
+    loginOrCreateUser(user) {
+        this.user = user;
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         let self = this;
-        console.log(this.user)
         fetch(creationEndpoint, {
                 method: 'POST',
-                body: JSON.stringify({ 'username': self.user.getUsername(), 'password': self.user.getPassword() }),
+                body: JSON.stringify({ 'username': user.getUsername(), 'password': user.getPassword() }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -92,20 +92,23 @@ class App {
                 return response.status;
             })
             .then(function(status) {
-                console.log(status)
                 if (status == 422) {
                     self.loggedIn = true;
-                    self.renderInitLogin();
+                    self.hideLoginForm();
+                    self.createAndAppendWelcomeChild('Welcome Back!');
+                    self.populateNotes();
                 } else if (status == 201) {
                     self.loggedIn = true;
                     self.newUser = true;
-                    self.renderInitLogin();
+                    self.hideLoginForm();
+                    self.createAndAppendWelcomeChild('New User Created');
+                    self.populateNotes();
                 } else {
                     self.revealInvalidLogin();
                     self.createAndAppendInvalidLoginChild('Invalid login, please try again.')
                 }
             })
-    }
+        }
 
     // works
     populateNotes() {
@@ -148,7 +151,7 @@ class App {
     // works
     createNewNote(text, title, tags) {
         const newNoteEndpoint = "https://notes-api.glitch.me/api/notes"
-        this.self = this;
+        let self = this;
         fetch(newNoteEndpoint, {
                 method: 'POST',
                 body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags }),
@@ -158,7 +161,7 @@ class App {
                 }
             })
             .then(function(response) {
-                //
+                self.populateNotes();
             })
     }
 
@@ -254,14 +257,8 @@ class App {
         addButt.addEventListener("click", function() {
             let titleVal = title.value;
             let textVal = noteText.value;
-            let tagsVal = noteTags.value;
-            if (tagsVal == "" || titleVal == "") {
-                self.createNewNote(textVal)
-                self.populateNotes()
-            } else {
-                self.createNewNote(textVal, titleVal, tagsVal)
-                self.populateNotes()
-            }
+            let tagsVal = noteTags.value.split(",");
+            self.createNewNote(textVal, titleVal, tagsVal)
             event.preventDefault()
         });
         addButt.innerHTML = 'add Note';
@@ -270,14 +267,8 @@ class App {
         upButt.addEventListener("click", function() {
             let titleVal = title.value;
             let textVal = noteText.value;
-            let tagsVal = noteTags.value;
-            if (tagsVal == "" || titleVal == "") {
-                self.updateNote(textVal)
-                self.populateNotes()
-            } else {
-                self.updateNote(textVal, titleVal, tagsVal)
-                self.populateNotes()
-            }
+            let tagsVal = noteTags.value.split(",")
+            self.updateNote(textVal, titleVal, tagsVal)
             event.preventDefault()
         });
         upButt.innerHTML = 'update Note';
@@ -288,9 +279,26 @@ class App {
             event.preventDefault()
         });
         delButt.innerHTML = 'delete Note';
+        let tagButt = document.createElement('button');
+        tagButt.classList.add('butt');
+        tagButt.addEventListener('click', function() {
+            let tagsVal = noteTags.value;
+            self.populateNotesByTag(tagsVal);
+            event.preventDefault()
+        });
+        tagButt.innerHTML = 'get Notes by Tag';
+        let allButt = document.createElement('button');
+        allButt.classList.add('butt');
+        allButt.addEventListener('click', function() {
+            self.populateNotes();
+            event.preventDefault()
+        });
+        allButt.innerHTML = 'get all Notes';
         buttParent.appendChild(addButt);
         buttParent.appendChild(upButt);
         buttParent.appendChild(delButt);
+        buttParent.appendChild(tagButt);
+        buttParent.appendChild(allButt);
     }
 
     removeNoteChildren() {
@@ -334,5 +342,16 @@ class App {
     }
 }
 
-let app = new App();
-app.renderInitLogin();
+main();
+
+function main(){
+    let app = new App();
+    let login = document.getElementById('subButt')
+    login.addEventListener('click', function() {
+        let username = document.getElementById('username');
+        let password = document.getElementById('password');
+        let user = new User(username.value, password.value);
+        app.loginOrCreateUser(user)
+        event.preventDefault();
+        })
+    }
