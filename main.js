@@ -19,8 +19,8 @@ class User {
 }
 
 class App {
-    constructor(user) {
-        this.user = user;
+    constructor() {
+        this.user = "";
         this.data = {};
         this.selectedNote = '';
         this.newUser = false;
@@ -28,8 +28,18 @@ class App {
     }
 
     renderInitLogin() {
+        let self = this
         if (this.loggedIn == false) {
             this.revealLoginForm();
+
+            let login = document.getElementById('subButt')
+            login.addEventListener('click', function() {
+                let username = document.getElementById('username')
+                let password = document.getElementById('password')
+                this.user = new User(username.value, password.value)
+                self.loginOrCreateUser()
+            })
+
         } else if (this.loggedIn == true && this.newUser == false) {
             this.hideLoginForm();
             this.createAndAppendWelcomeChild('Welcome Back!');
@@ -70,9 +80,10 @@ class App {
     loginOrCreateUser() {
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
         let self = this;
+        console.log(this.user)
         fetch(creationEndpoint, {
                 method: 'POST',
-                body: JSON.stringify({ 'username': this.user.getUsername(), 'password': this.user.getPassword() }),
+                body: JSON.stringify({ 'username': self.user.getUsername(), 'password': self.user.getPassword() }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -81,6 +92,7 @@ class App {
                 return response.status;
             })
             .then(function(status) {
+                console.log(status)
                 if (status == 422) {
                     self.loggedIn = true;
                     self.renderInitLogin();
@@ -166,8 +178,8 @@ class App {
     }
 
     // works
-    updateNote(noteId, text, title, tags) {
-        let updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + noteId;
+    updateNote(text, title, tags) {
+        let updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + this.selectedNote;
         let self = this;
         fetch(updateNoteEndpoint, {
                 method: 'PUT',
@@ -240,12 +252,32 @@ class App {
         let addButt = document.createElement('button');
         addButt.classList.add('butt');
         addButt.addEventListener("click", function() {
+            let titleVal = title.value;
+            let textVal = noteText.value;
+            let tagsVal = noteTags.value;
+            if (tagsVal == "" || titleVal == "") {
+                self.createNewNote(textVal)
+                self.populateNotes()
+            } else {
+                self.createNewNote(textVal, titleVal, tagsVal)
+                self.populateNotes()
+            }
             event.preventDefault()
         });
         addButt.innerHTML = 'add Note';
         let upButt = document.createElement('button');
         upButt.classList.add('butt');
         upButt.addEventListener("click", function() {
+            let titleVal = title.value;
+            let textVal = noteText.value;
+            let tagsVal = noteTags.value;
+            if (tagsVal == "" || titleVal == "") {
+                self.updateNote(textVal)
+                self.populateNotes()
+            } else {
+                self.updateNote(textVal, titleVal, tagsVal)
+                self.populateNotes()
+            }
             event.preventDefault()
         });
         upButt.innerHTML = 'update Note';
@@ -302,7 +334,5 @@ class App {
     }
 }
 
-user = new User('james', 'matt');
-app = new App(user);
-app.loginOrCreateUser();
-app.populateNotes();
+let app = new App();
+app.renderInitLogin();
