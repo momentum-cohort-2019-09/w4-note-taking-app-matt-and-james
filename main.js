@@ -206,6 +206,11 @@ class App {
         parent.appendChild(child);
     }
 
+    removeWelcomeChild(){
+        let child = document.querySelector('.welcome');
+        child.parentElement.removeChild(child);
+    }
+
     // works
     createAndAppendInvalidLoginChild(message) {
         let child = document.createElement('p');
@@ -294,11 +299,22 @@ class App {
             event.preventDefault()
         });
         allButt.innerHTML = 'get all Notes';
+        let logButt = document.createElement('button');
+        logButt.classList.add('butt');
+        logButt.addEventListener('click', function() {
+            self.removeNoteChildren();
+            self.removeLabelAndInputChildren();
+            self.removeWelcomeChild();
+            self.revealLoginForm();
+            event.preventDefault()
+        });
+        logButt.innerHTML = 'Logout';
         buttParent.appendChild(addButt);
         buttParent.appendChild(upButt);
         buttParent.appendChild(delButt);
         buttParent.appendChild(tagButt);
         buttParent.appendChild(allButt);
+        buttParent.appendChild(logButt);
     }
 
     removeNoteChildren() {
@@ -338,6 +354,10 @@ class App {
     }
 
     revealLoginForm() {
+        let username = document.getElementById('username');
+        let password = document.getElementById('password');
+        username.value = '';
+        password.value = '';
         document.getElementById('login-form').classList.remove('hidden');
     }
 }
