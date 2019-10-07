@@ -27,12 +27,45 @@ class App {
         this.loggedIn = false;
     }
 
+    getSortedNotesOrder(){
+        let unsortedDates = [];
+        let tmp = [];
+        let sortedOrder = [];
+
+        for (let i = 0; i < this.data.notes.length; i++){
+            unsortedDates[i] = new Date(this.data.notes[i].updated).getTime();
+        }
+
+        tmp = unsortedDates.slice();
+
+        tmp.sort(function (a, b){
+            if (a > b){
+                return -1
+            } else if (b > a){
+                return 1
+            } else {
+                return 0
+            }
+        });
+
+        for (let i = 0; i < tmp.length; i++){
+            for (let j = 0; j < unsortedDates.length; j++){
+                if (tmp[i] == unsortedDates[j]){
+                    sortedOrder.push(j);
+                }
+            }
+        }
+
+        return sortedOrder;
+    }
+
     renderPage(notes) {
         this.removeNoteChildren();
         this.removeLabelAndInputChildren();
         this.addActionButtonsAndInput();
         let parent = document.getElementById('notes');
         let ulChild = document.createElement('ul');
+        let sorted = this.getSortedNotesOrder();
         ulChild.classList.add('list')
         ulChild.setAttribute('id', 'list');
         let self = this;
@@ -44,31 +77,50 @@ class App {
                 for (let i = 0; i < clickedNotes.length; i++) {
                     clickedNotes[i].style.color = 'black';
                 }
-                child.style.color = 'blue';
-                self.selectedNote = notes.notes[i]._id
+                if (self.selectedNote == notes.notes[i]._id){
+                    child.style.color = 'black';
+                    self.selectedNote = '';
+                } else {
+                    child.style.color = 'blue';
+                    self.selectedNote = notes.notes[i]._id
+                }
                 event.preventDefault();
             })
-            if (notes.notes[i].title == '' || notes.notes[i].title == null){
-                if (notes.notes[i].updated == '' || notes.notes[i].updated == null){
-                    child.innerHTML = '<span> ' + notes.notes[i].text + ' <span>';
+            if (notes.notes[sorted[i]].title == '' || notes.notes[sorted[i]].title == null){
+                if (notes.notes[sorted[i]].updated == '' || notes.notes[sorted[i]].updated == null){
+                    if (notes.notes[sorted[i]].tags != null && notes.notes[sorted[i]].tags[0].length > 0){
+                        let tagsText = notes.notes[sorted[i]].tags.join();
+                        child.innerHTML = '<span> ' + notes.notes[sorted[i]].text + ' Tags: ' + tagsText + ' <span>';
+                    } else {
+                        child.innerHTML = '<span> ' + notes.notes[sorted[i]].text + ' <span>';
+                    }
                 } else {
-                    let lastUpdated = notes.notes[i].updated.split('T');
-                    let yearMonthDay = lastUpdated[0].split('-');
-                    let hourMinSec = lastUpdated[1].split(':');
-                    let formatedUpdated = yearMonthDay[1] + '/' + yearMonthDay[2] + '/' + yearMonthDay[0] + ' ' + hourMinSec[0] + ':' + hourMinSec[1] + ':' + hourMinSec[2].split('.')[0];
-                    let date = new Date(formatedUpdated + ' UTC');
-                    child.innerHTML = '<span> ' + notes.notes[i].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                    if (notes.notes[sorted[i]].tags != null && notes.notes[sorted[i]].tags[0].length > 0){
+                        let tagsText = notes.notes[sorted[i]].tags.join();
+                        let date = new Date(notes.notes[sorted[i]].updated);
+                        child.innerHTML = '<span> ' + notes.notes[sorted[i]].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' Tags: ' + tagsText + ' <span>';
+                    } else {
+                        let date = new Date(notes.notes[sorted[i]].updated);
+                        child.innerHTML = '<span> ' + notes.notes[sorted[i]].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                    }
                 }
             } else {
-                if (notes.notes[i].updated == '' || notes.notes[i].updated == null) {
-                    child.innerHTML = '<span> ' + '<strong>' + notes.notes[i].title + ': ' + '</strong>' + notes.notes[i].text + ' <span>';
+                if (notes.notes[sorted[i]].updated == '' || notes.notes[sorted[i]].updated == null) {
+                    if (notes.notes[sorted[i]].tags != null && notes.notes[sorted[i]].tags[0].length > 0){
+                        let tagsText = notes.notes[sorted[i]].tags.join();
+                        child.innerHTML = '<span> ' + '<strong>' + notes.notes[sorted[i]].title + ': ' + '</strong>' + notes.notes[sorted[i]].text + ' Tags: ' + tagsText + ' <span>';
+                    } else {
+                        child.innerHTML = '<span> ' + '<strong>' + notes.notes[sorted[i]].title + ': ' + '</strong>' + notes.notes[sorted[i]].text + ' <span>';
+                    }
                 } else {
-                    let lastUpdated = notes.notes[i].updated.split('T');
-                    let yearMonthDay = lastUpdated[0].split('-');
-                    let hourMinSec = lastUpdated[1].split(':');
-                    let formatedUpdated = yearMonthDay[1] + '/' + yearMonthDay[2] + '/' + yearMonthDay[0] + ' ' + hourMinSec[0] + ':' + hourMinSec[1] + ':' + hourMinSec[2].split('.')[0];
-                    let date = new Date(formatedUpdated + ' UTC');
-                    child.innerHTML = '<span> ' + '<strong>' + notes.notes[i].title + ': ' + '</strong>' + notes.notes[i].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                    if (notes.notes[sorted[i]].tags != null && notes.notes[sorted[i]].tags[0].length > 0){
+                        let tagsText = notes.notes[sorted[i]].tags.join();
+                        let date = new Date(notes.notes[sorted[i]].updated);
+                        child.innerHTML = '<span> ' + '<strong>' + notes.notes[sorted[i]].title + ': ' + '</strong>' + notes.notes[sorted[i]].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' Tags: ' + tagsText + ' <span>';
+                    } else {
+                        let date = new Date(notes.notes[sorted[i]].updated);
+                        child.innerHTML = '<span> ' + '<strong>' + notes.notes[sorted[i]].title + ': ' + '</strong>' + notes.notes[sorted[i]].text + '<em>' + ' Updated: '+ date.toString() + '</em>' + ' <span>';
+                    }
                 }
             }
             ulChild.appendChild(child);
@@ -76,7 +128,6 @@ class App {
         parent.appendChild(ulChild);
     }
 
-    // works
     loginOrCreateUser(user) {
         this.user = user;
         const creationEndpoint = 'https://notes-api.glitch.me/api/users'
@@ -110,7 +161,6 @@ class App {
             })
         }
 
-    // works
     populateNotes() {
         const allNotesEndpoint = "https://notes-api.glitch.me/api/notes"
         let self = this;
@@ -129,11 +179,10 @@ class App {
             })
     }
 
-    // works
     populateNotesByTag(tag) {
-        let notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/" + tag;
+        const notesByTagEndpoint = "https://notes-api.glitch.me/api/notes/tagged/";
         let self = this;
-        fetch(notesByTagEndpoint, {
+        fetch(notesByTagEndpoint + tag, {
                 method: 'GET',
                 headers: {
                     'Authorization': this.user.getAuth()
@@ -148,7 +197,6 @@ class App {
             })
     }
 
-    // works
     createNewNote(text, title, tags) {
         const newNoteEndpoint = "https://notes-api.glitch.me/api/notes"
         let self = this;
@@ -165,11 +213,10 @@ class App {
             })
     }
 
-    // works
     deleteNote() {
-        let deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + this.selectedNote;
+        const deleteNoteEndpoint = "https://notes-api.glitch.me/api/notes/";
         let self = this;
-        fetch(deleteNoteEndpoint, {
+        fetch(deleteNoteEndpoint + self.selectedNote, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': this.user.getAuth(),
@@ -180,11 +227,10 @@ class App {
             })
     }
 
-    // works
     updateNote(text, title, tags) {
-        let updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/" + this.selectedNote;
+        const updateNoteEndpoint = "https://notes-api.glitch.me/api/notes/";
         let self = this;
-        fetch(updateNoteEndpoint, {
+        fetch(updateNoteEndpoint + self.selectedNote, {
                 method: 'PUT',
                 body: JSON.stringify({ 'text': text, 'title': title, 'tags': tags }),
                 headers: {
@@ -197,7 +243,6 @@ class App {
             })
     }
 
-    // works
     createAndAppendWelcomeChild(message) {
         let child = document.createElement('p');
         let parent = document.getElementById('notes');
@@ -211,7 +256,6 @@ class App {
         child.parentElement.removeChild(child);
     }
 
-    // works
     createAndAppendInvalidLoginChild(message) {
         let child = document.createElement('p');
         let parent = document.getElementById('invalid-login');
@@ -360,6 +404,7 @@ class App {
         password.value = '';
         document.getElementById('login-form').classList.remove('hidden');
     }
+
 }
 
 main();
